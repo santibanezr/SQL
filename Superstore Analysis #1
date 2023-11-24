@@ -1,3 +1,5 @@
+#This project uses the following Superstore data:
+
 CREATE TABLE superstore (
     item_id INTEGER PRIMARY KEY,
     item_name TEXT,
@@ -24,3 +26,25 @@ VALUES
     (13, 'Slow Cooker', 'Appliances', 49.95, 30, 4.7),
     (14, 'Cutlery Set', 'Kitchen Supplies', 34.50, 40, 4.4),
     (15, 'Cozy Throw Blanket', 'Furnishings', 24.99, 100, 4.2);
+
+# Use a SELECT statement to order table by price
+SELECT *
+FROM superstore
+ORDER BY price desc;
+
+# Show a statistic about stock quantity by category
+SELECT SUM(stock_quantity), category
+FROM superstore
+GROUP BY category;
+
+# Show Kitchen Supplies listed by price
+SELECT *
+FROM superstore
+WHERE category = "Kitchen Supplies"
+ORDER BY price desc;
+
+# Show items with rating above 4.5 listed according to their rating
+SELECT *
+FROM superstore
+WHERE average_rating> 4.5
+ORDER BY category;
