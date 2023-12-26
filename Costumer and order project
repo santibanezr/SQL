@@ -1,0 +1,70 @@
+*USING BIT_DB to query data to get orders and sales data
+How many orders were placed in January? (9681)*
+
+SELECT COUNT(orderID) 
+FROM BIT_DB.JanSales
+WHERE length(orderID)=6
+AND orderID <> 'Order ID';
+
+*How many of those orders were for an iPhone? (379)*
+SELECT COUNT(Product)
+FROM BIT_DB.JanSales
+WHERE (Product)='iPhone';
+
+*Or (379) Cleaning the data.  In this case I didn't think it would be necessary because we are counting the iPhone results, but if the data is not accurate, then iPhone counts could be repeated*
+
+SELECT COUNT(Product)
+FROM BIT_DB.JanSales
+WHERE Product='iPhone'
+AND length(orderID)=6
+AND orderID <> 'order ID';
+
+*Select the customer account numbers for all the orders that were placed in February (1000 accounts). Added distinct to return only different values for account number and avoid duplicates.  Aliases added for tables*
+
+SELECT distinct acctnum
+FROM BIT_DB.customers cust
+
+INNER JOIN BIT_DB.FebSales Feb
+ON cust.order_id=FEB.orderid
+WHERE length(orderid) = 6
+AND orderid <> 'Order ID';
+
+*Which product was the cheapest one sold in January, and what was the price?. Added GROUP BY and ORDER BY to prepare for other RDBMS*
+
+SELECT distinct Product, min(price) 
+FROM BIT_DB.JanSales
+GROUP BY product,price
+ORDER BY price ASC
+LIMIT 1;
+
+*What is the total revenue for each product sold in January?*
+
+SELECT distinct product, sum(quantity), price, ROUND(sum(quantity)*price) revenue
+FROM BIT_DB.JanSales
+WHERE product <> 'Product'
+AND product <> ''
+GROUP BY product;
+
+*Which products were sold in February at 548 Lincoln St, Seattle, WA 98101, how many of each were sold, and what was the total revenue?
+
+SELECT sum(quantity), quantity*price revenue, product
+FROM BIT_DB.FebSales
+WHERE location='548 Lincoln St, Seattle, WA 98101'
+GROUP BY product;
+
+*How many customers ordered more than 2 products at a time in February, and what was the average amount spent for those customers?*
+
+SELECT count(distinct customers.acctnum), avg(quantity*price)
+FROM BIT_DB.FebSales
+LEFT JOIN BIT_DB.customers
+ON orderid=.order_id
+WHERE Quantity>2
+AND length(orderid) = 6
+AND orderid <> 'Order ID';
+
+*List all the products sold in Los Angeles in February, and include how many of each were sold*
+
+SELECT distinct product, sum(quantity)
+FROM BIT_DB.FebSales
+WHERE location like '%Los Angeles%'
+GROUP BY product;
