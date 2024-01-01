@@ -84,19 +84,23 @@ FROM BIT_DB.FebSales
 WHERE product LIKE '%Headphone%'
 GROUP BY product;
 
-*What was the average amount spent per account in February?*
+*What was the average amount spent per account in February? (clean up data to have accurate results)*
 
 SELECT sum(quantity*price)/count(acctnum) avgSpent
 FROM BIT_DB.FebSales
 INNER JOIN BIT_DB.customers
-ON orderID=order_id;
+ON orderID=order_id
+WHERE length(orderID)=6
+AND orderID<>'order ID';
 
-*What was the average quantity of products purchased per account in February?*
+*What was the average quantity of products purchased per account in February? (clean up data to have accurate results)*
 
 SELECT sum(quantity)/count(acctnum) avgQty
 FROM BIT_DB.FebSales
 INNER JOIN BIT_DB.customers
-ON orderID=order_id;
+ON orderID=order_id
+WHERE length(orderID)=6
+AND orderID<>'order ID';
 
 Which product brought in the most revenue in January and how much revenue did it bring in total?
 
