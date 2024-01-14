@@ -111,3 +111,30 @@ GROUP BY c.SupportRepId
 ORDER BY TotalSalesByAgent desc
 LIMIT 1;
 
+*What were the top 5 countries in generated revenue over the years*
+SELECT ROUND(sum(total),2),billingcountry 
+FROM invoices
+GROUP BY billingcountry
+ORDER BY sum(total) desc, billingcountry
+LIMIT 5;
+
+*The USA has the largest revenue. 1. What are the revenue numbers by year in the USA?  2. How are the sales represented by Genre?
+SELECT strftime('%Y', invoicedate) AS year, ROUND(SUM(total),2),Billingcountry
+FROM invoices
+WHERE Billingcountry = 'USA'
+GROUP BY year,Billingcountry;
+
+SELECT strftime('%Y', i.invoicedate) AS year, ROUND(SUM(i.total),2) as TotalBYGenre,i.Billingcountry,g.name 
+FROM invoices i
+INNER JOIN invoice_items ii
+ON i.invoiceid=ii.invoiceid
+INNER JOIN tracks t
+ON ii.trackid=t.trackid
+INNER JOIN genres g
+ON t.GenreId=g.genreid
+WHERE Billingcountry = 'USA'
+GROUP BY year,g.name
+ORDER BY TotalBYGenre desc, g.name;
+
+
+
