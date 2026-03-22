@@ -84,3 +84,47 @@ ORDER BY paid_time_off_days;
 #Listing maximum revenue and minimum avg tenure
 SELECT MAX(revenue),MIN(avg_employee_tenure)
 FROM fortune_companies;
+--Rank industries by revenue
+SELECT industry, ROUND (SUM(revenue),2) AS revenue_by_industry
+FROM fortune_companies
+GROUP BY industry
+ORDER BY revenue_by_industry desc;
+
+--WHICH companies have more than 20 days PTO and more than 10 weeks of maternity leave
+SELECT company_name, paid_time_off_days, maternity_leave_weeks
+FROM fortune_companies
+WHERE healthcare_benefits = 1
+AND paid_time_off_days > 20
+AND maternity_leave_weeks >= 12
+ORDER BY paid_time_off_days desc;
+
+--AVG PTO, min and max PTO, avg mat leave and avg tenure by industry 
+SELECT industry, ROUND(AVG(paid_time_off_days),2) AS avg_pto, max (paid_time_off_days) AS max_pto, min (paid_time_off_days) AS min_pto, ROUND (AVG(maternity_leave_weeks),2) AS mat_leave, ROUND(AVG(avg_employee_tenure),2) AS avg_tenure
+FROM fortune_companies
+GROUP BY industry
+ORDER BY avg_tenure desc;
+
+--I consider 15 days of pto and 10 weeks mat leave to be good, 20 days very and more than 12 weeks to be very good and less than 10 days pto not good.
+--Rank companies benefits based on that criteria
+
+SELECT industry, company_name, paid_time_off_days, maternity_leave_weeks
+,CASE WHEN paid_time_off_days >=20 AND maternity_leave_weeks >=12 THEN "Very Good"
+WHEN paid_time_off_days >=15 AND maternity_leave_weeks >=10 THEN "Good"
+WHEN paid_time_off_days >=10 AND maternity_leave_weeks >=8 THEN "Could Be Better"
+ELSE "Not Ideal"
+END AS benefits_plan
+FROM fortune_companies
+WHERE healthcare_benefits = 1
+ORDER BY paid_time_off_days desc
+LIMIT 10;
+
+--Are there any companies that have no benefits?
+SELECT company_name
+FROM fortune_companies
+WHERE healthcare_benefits = 0;
+
+--What industries have very good pto and more than 5 years of average tenure
+SELECT industry, ROUND (avg(avg_employee_tenure),1) AS avg_tenure, ROUND (avg(paid_time_off_days),1) AS avg_pto
+FROM  fortune_companies
+GROUP BY industry
+HAVING avg_tenure > 5 AND avg_pto >20;
